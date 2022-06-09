@@ -87,7 +87,22 @@
             finalizarAguardar();
             return false;
         }
-        else {
+        else if (emailVar.search("@") == -1)
+        {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Email inválido";
+            finalizarAguardar();
+            return false;
+        }
+        else if (senhaVar != confirmacaoSenhaVar)
+        {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Os campos estão diferentes!";
+            finalizarAguardar();
+            return false;
+        }
+        else 
+        {
             setInterval(sumirMensagem, 5000)
         }
 
