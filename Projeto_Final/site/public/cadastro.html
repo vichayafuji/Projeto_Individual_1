@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayaka Wiki - Cadastro</title>
+    <script src="./js/funcoes.js"></script>
+    <link rel="stylesheet" href="css/aulaPI.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com/%22%3E">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link rel="icon" href="imagem/fan-ayaka.png">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="logo"><img src="imagem/fan-ayaka.png"></div>
+                <ul>
+                    <li> <a href="index.html">Home</a></li>
+                    <li> <a href="guia.html">Guias</a></li>
+                    <li> <a href="sobre.html">Sobre</a></li>
+                    <li> <a href="simulador.html">Simulador de Dano</a></li>
+                    <li> <a href="Cadastro.html">Cadastro</a></li>
+                    <li> <a href="Login.html">Login</a></li>
+                </ul>
+        </nav>
+    </header>
+    <div class="banner">
+        <div class="alerta_erro">
+            <div class="card_erro" id="cardErro">
+                <span id="mensagem_erro"></span>
+            </div>
+        </div>
+        <div class="banner-login">
+            <div class="container2">
+                <div class="card">
+                    <h1>Faça seu cadastro!</h1>
+                    <h4>Insira seu nickname:</h4>
+                    <input id="nome_input" type="text" placeholder="Seu nickname">
+                    <h4>Insira seu email:</h4>
+                    <input id="email_input" type="text" placeholder="email@provedor.com">
+                    <h4>Insira sua senha:</h4>
+                    <input id="senha_input" type="password" placeholder="******">
+                    <h4>Confirme sua senha:</h4>
+                    <input id="confirmacao_senha_input" type="password" placeholder="******">
+                    <h4>Build da Ayaka:</h4>
+                    <select id="build_input">
+                        <option value="permafreeze">Permafreeze</option>
+                        <option value="melt">Melt</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                    <br>
+                    <button class="btn" onclick="cadastrar()">Cadastrar</button>
+
+                </div>
+                <div id="div_aguardar" class="loading-div">
+                </div>
+
+                <div id="div_erros_login">
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>
+
+<script>
+    function cadastrar() {
+        aguardar();
+
+        //Recupere o valor da nova input pelo nome do id
+        // Agora vá para o método fetch logo abaixo
+        var nomeVar = nome_input.value;
+        var emailVar = email_input.value;
+        var senhaVar = senha_input.value;
+        var confirmacaoSenhaVar = confirmacao_senha_input.value;
+        var buildVar = build_input.value;
+
+        if (nomeVar == "" || emailVar == "" || senhaVar == "" || confirmacaoSenhaVar == "" || buildVar == "") {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Por favor, preencher todos os campos!";
+
+            finalizarAguardar();
+            return false;
+        }
+        else {
+            setInterval(sumirMensagem, 5000)
+        }
+
+        // Enviando o valor da nova input
+        fetch("/usuarios/cadastrar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                // crie um atributo que recebe o valor recuperado aqui
+                // Agora vá para o arquivo routes/usuario.js
+                nomeServer: nomeVar,
+                emailServer: emailVar,
+                senhaServer: senhaVar,
+                buildServer: buildVar
+            })
+        }).then(function (resposta) {
+
+            console.log("resposta: ", resposta);
+
+            if (resposta.ok) {
+                cardErro.style.display = "block";
+
+                mensagem_erro.innerHTML = "Cadastro realizado com sucesso! Redirecionando para tela de Login...";
+
+                setTimeout(() => {
+                    window.location = "login.html";
+                }, "2000")
+                
+                limparFormulario();
+                finalizarAguardar();
+            } else {
+                throw ("Houve um erro ao tentar realizar o cadastro!");
+            }
+        }).catch(function (resposta) {
+            console.log(`#ERRO: ${resposta}`);
+            finalizarAguardar();
+        });
+
+        return false;
+    }
+
+    function sumirMensagem() {
+        cardErro.style.display = "none"
+    }
+
+</script>
